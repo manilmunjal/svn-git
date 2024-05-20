@@ -147,14 +147,23 @@ jobs:
 
       - name: Clone SVN repository using svn2git
         run: |
-          
           sudo apt-get update
-          sudo apt-get install -y git subversion
-          sudo apt-get install git-svn
-          sudo apt-get install svn2git
-          svn2git $SVN_REPO_URL
-          # export PATH="$PATH:/usr/bin/git:/usr/bin/svn"
-          git svn clone $SVN_REPO_URL --authors-file=authors.txt --no-metadata -s git_repo
-          cd git_repo
-          git remote add origin $GIT_REPO_URL
-          git push -u origin master
+          sudo apt-get install -y git git-svn
+
+          git svn clone $SVN_REPO_URL --stdlayout --username $SVN_USERNAME --password $SVN_PASSWORD svn-repo
+          cd svn-repo
+          git config --global user.name "manilmunjal"
+          git config --global user.email "manilmunjal@gmail.com"
+          git remote add origin https://manilmunjal:$PAT@$GIT_REPO_URL
+          git push -u origin --all
+          git push -u origin --tags
+          # sudo apt-get update
+          # sudo apt-get install -y git subversion
+          # sudo apt-get install git-svn
+          # sudo apt-get install svn2git
+          # svn2git $SVN_REPO_URL
+          # # export PATH="$PATH:/usr/bin/git:/usr/bin/svn"
+          # git svn clone $SVN_REPO_URL --authors-file=authors.txt --no-metadata -s git_repo
+          # cd git_repo
+          # git remote add origin $GIT_REPO_URL
+          # git push -u origin master
