@@ -148,7 +148,7 @@ jobs:
       - name: Clone SVN repository using svn2git
         run: |
           sudo apt-get update
-          sudo apt-get install -y git git-svn
+          sudo apt-get install -y git=1:2.33.0-1ubuntu1 git-svn
 
           git svn clone $SVN_REPO_URL --stdlayout --username $SVN_USERNAME --password $SVN_PASSWORD svn-repo
           cd svn-repo
