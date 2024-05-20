@@ -92,6 +92,7 @@ env:
   JFROG_USER: "manil.m@statusneo.com"
   JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }} # Make sure to add this secret in repository settings
   GIT_REPO_URL: "https://${{secrets.PAT}}@github.com/manilmunjal/svn-git.git"
+  GIT_TOKEN: ${{secrets.PAT}}
 
 
 
@@ -147,23 +148,39 @@ jobs:
 
       - name: Clone SVN repository using svn2git
         run: |
-          sudo apt-get update
-          sudo apt-get install -y git=1:2.33.0-1ubuntu1 git-svn
+          docker build -t dockerfile .
+          docker run --rm \
+            -e SVN_REPO_URL="$SVN_REPO_URL" \
+            -e SVN_USERNAME="$SVN_USERNAME" \
+            -e SVN_PASSWORD="$SVN_PASSWORD" \
+            -e GIT_REPO_URL="$GIT_REPO_URL" \
+            -e GIT_USERNAME="manilmunjal" \
+            -e GIT_EMAIL="manilmunjal@gmail.com" \
+            -e GIT_TOKEN="$PAT" \
+            dockerfile
 
-          git svn clone $SVN_REPO_URL --stdlayout --username $SVN_USERNAME --password $SVN_PASSWORD svn-repo
-          cd svn-repo
-          git config --global user.name "manilmunjal"
-          git config --global user.email "manilmunjal@gmail.com"
-          git remote add origin https://manilmunjal:$PAT@$GIT_REPO_URL
-          git push -u origin --all
-          git push -u origin --tags
+
+
+
+
+
           # sudo apt-get update
-          # sudo apt-get install -y git subversion
-          # sudo apt-get install git-svn
-          # sudo apt-get install svn2git
-          # svn2git $SVN_REPO_URL
-          # # export PATH="$PATH:/usr/bin/git:/usr/bin/svn"
-          # git svn clone $SVN_REPO_URL --authors-file=authors.txt --no-metadata -s git_repo
-          # cd git_repo
-          # git remote add origin $GIT_REPO_URL
-          # git push -u origin master
+          # sudo apt-get install -y git=1:2.33.0-1ubuntu1 git-svn
+
+          # git svn clone $SVN_REPO_URL --stdlayout --username $SVN_USERNAME --password $SVN_PASSWORD svn-repo
+          # cd svn-repo
+          # git config --global user.name "manilmunjal"
+          # git config --global user.email "manilmunjal@gmail.com"
+          # git remote add origin https://manilmunjal:$PAT@$GIT_REPO_URL
+          # git push -u origin --all
+          # git push -u origin --tags
+          # # sudo apt-get update
+          # # sudo apt-get install -y git subversion
+          # # sudo apt-get install git-svn
+          # # sudo apt-get install svn2git
+          # # svn2git $SVN_REPO_URL
+          # # # export PATH="$PATH:/usr/bin/git:/usr/bin/svn"
+          # # git svn clone $SVN_REPO_URL --authors-file=authors.txt --no-metadata -s git_repo
+          # # cd git_repo
+          # # git remote add origin $GIT_REPO_URL
+          # # git push -u origin master
