@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+                # $SUBGIT_HOME/bin/subgit uninstall git_repo
+
 
 jobs:
   migrate:
@@ -24,17 +26,17 @@ jobs:
 
       - name: Clone SVN repository
         run: |
-          svn co --username ${{ secrets.SVN_USERNAME }} --password ${{ secrets.SVN_PASSWORD }} ${{ secrets.SVN_REPO_URL }} svn_repo
+          svn co --username ${{ secrets.SVN_USERNAME }} --password ${{ secrets.SVN_PASSWORD }} https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/ svn_repo
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SVN_REPO_URL: ${{ secrets.SVN_REPO_URL }}
+          SVN_REPO_URL: https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/
 
       - name: Set up JFrog CLI
         run: |
           curl -fL https://getcli.jfrog.io | sh
           mv jfrog /usr/local/bin/jfrog
-          jfrog config add my-jfrog-server --artifactory-url ${{ secrets.JFROG_URL }} --user ${{ secrets.JFROG_USER }} --password ${{ secrets.JFROG_PASSWORD }} --interactive=false
+          jfrog config add my-jfrog-server --artifactory-url https://manilmunjalsneo.jfrog.io/artifactory--user ${{ secrets.JFROG_USER }} --password ${{ secrets.JFROG_PASSWORD }} --interactive=false
 
       - name: Create Git repository
         run: |
@@ -51,7 +53,7 @@ jobs:
           find . -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.bin" \) | while read binary; do
             binary_name=$(basename "$binary")
             jfrog rt u "$binary" "${{ secrets.JFROG_REPO }}/$binary_name"
-            jfrog_url="${{ secrets.JFROG_URL }}/${{ secrets.JFROG_REPO }}/$binary_name"
+            jfrog_url="https://manilmunjalsneo.jfrog.io/artifactory/${{ secrets.JFROG_REPO }}/$binary_name"
             echo "$jfrog_url" > "$binary.url"
             git add "$binary.url"
           done
@@ -68,7 +70,7 @@ jobs:
 
       - name: Push to GitLab
         run: |
-          git remote add origin ${{ secrets.GIT_REPO_URL }}
+          git remote add origin https://github.com/manilmunjal/svn-git.git
           git push -u origin master
 
       - name: Clean up
@@ -81,13 +83,12 @@ jobs:
           wget --quiet https://subgit.com/download/subgit-3.3.12.zip
           unzip -qq subgit-3.3.12.zip
           SUBGIT_HOME=$(pwd)/subgit-3.3.12
-          $SUBGIT_HOME/bin/subgit configure --layout auto ${{ secrets.SVN_REPO_URL }}
+          $SUBGIT_HOME/bin/subgit configure --layout auto https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/
           $SUBGIT_HOME/bin/subgit install git_repo
-          $SUBGIT_HOME/bin/subgit uninstall git_repo
         env:
-          SVN_REPO_URL: ${{ secrets.SVN_REPO_URL }}
-          GIT_REPO_URL: ${{ secrets.GIT_REPO_URL }}
-          JFROG_URL: ${{ secrets.JFROG_URL }}
+          SVN_REPO_URL: https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/
+          GIT_REPO_URL: https://github.com/manilmunjal/svn-git.git
+          JFROG_URL: https://manilmunjalsneo.jfrog.io/artifactory
           JFROG_USER: ${{ secrets.JFROG_USER }}
           JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
           JFROG_REPO: ${{ secrets.JFROG_REPO }}
