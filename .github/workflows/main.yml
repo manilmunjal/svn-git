@@ -115,6 +115,12 @@ jobs:
       # Extract binaries and upload to JFrog
       - name: Extract binaries and upload to JFrog
         run: |
+          # Install JFrog CLI
+          curl -fL https://getcli.jfrog.io | sh
+          mv jfrog /usr/local/bin/jfrog
+
+           # Configure JFrog CLI
+          jfrog config add my-jfrog-server --artifactory-url $JFROG_URL --user $JFROG_USER --password $JFROG_PASSWORD --interactive=false
           git config --global user.name "manilmunjal"
           git config --global user.email "manilmunjal@gmail.com"
           # Extract binaries
