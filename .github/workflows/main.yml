@@ -1,9 +1,9 @@
 name: SVN to GitHub Migration
 
-# on:
-#   push:
-#     branches:
-#       - main  # Trigger the workflow on pushes to the main branch
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on pushes to the main branch
 
 jobs:
   migrate:
@@ -15,8 +15,8 @@ jobs:
 
       - name: Set up Git credentials
         run: |
-          git config --global user.email "chaudharysarthak46@gmail.com"
-          git config --global user.name "SarthakChaudhary46"
+          git config --global user.email "manilmunjal@gmail.com"
+          git config --global user.name "manilmunjal"
 
       - name: Clone SVN repository and extract JFrog Artifactory URLs
         run: |
@@ -26,7 +26,7 @@ jobs:
           # Extract JFrog Artifactory URLs for binary files
           find . -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.bin" \) | while read binary; do
             binary_name=$(basename "$binary")
-            jfrog_url="https://aws46.jfrog.io/artifactory/demo-generic-local/$binary_name"
+            jfrog_url="https://manilmunjalsneo.jfrog.io/artifactory/$binary_name"
             echo "$jfrog_url" > "$binary.url"
             git add "$binary.url"
           done
@@ -39,13 +39,14 @@ jobs:
 
       - name: Add GitHub repository as remote
         run: |
-          git remote add github_repo https://github.com/SarthakChaudhary46/Svn2Git
+          git remote add github_repo https://github.com/manilmunjal/svn-git.git
 
       - name: Push to GitHub
         run: |
-          git config --global credential.helper store
-          git config --global user.email "$GIT_EMAIL"
-          git config --global user.name "$GIT_NAME"
-          echo "https://SarthakChaudhary46:${{ secrets.PAT }}@github.com/SarthakChaudhary46/Svn2Git" > ~/.git-credentials
+          # git config --global credential.helper store
+          # git config --global user.email "$GIT_EMAIL"
+          # git config --global user.name "$GIT_NAME"
+          # echo "https://SarthakChaudhary46:${{ secrets.PAT }}@github.com/SarthakChaudhary46/Svn2Git" > ~/.git-credentials
           git push --all github_repo
           git push --tags github_repo
+          git commit -m "hemlo"
