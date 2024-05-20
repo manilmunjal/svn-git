@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+                # $SUBGIT_HOME/bin/subgit uninstall git_repo
+
 
 jobs:
   migrate:
@@ -17,13 +19,10 @@ jobs:
           git config --global user.email "manilmunjal@gmail.com"
           git config --global user.name "manilmunjal"
 
-      - name: Install dependencies and resolve package conflicts
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y git-svn=1:2.33.0-0ppa1~ubuntu22.04.1 default-jdk unzip wget
-          sudo apt-get -f install
-          sudo dpkg --configure -a
-          sudo apt-get clean
+          sudo apt-get install -y git-svn default-jdk unzip wget
 
       - name: Clone SVN repository
         run: |
@@ -31,6 +30,7 @@ jobs:
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_REPO_URL: https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/
 
       - name: Set up JFrog CLI
         run: |
@@ -71,7 +71,7 @@ jobs:
       - name: Push to GitLab
         run: |
           git remote add origin https://github.com/manilmunjal/svn-git.git
-          git push -u origin main
+          git push -u origin master
 
       - name: Clean up
         run: |
