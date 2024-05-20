@@ -152,7 +152,21 @@ jobs:
           # sudo apt-get install -y subversion
           # sudo apt-get install -y ruby ruby-dev
           # sudo apt-get install -y git=1:2.33.0-1ubuntu1 git-svn subversion
-          sudo apt-get update
+          sudo apt-get remove git
+
+          # Add repository with the desired version (if necessary)
+          # For example, if you want to use version 2.33.0-1ubuntu1:
+          # sudo add-apt-repository ppa:git-core/ppa
+          
+          # Install the older version of git
+          sudo apt-get install git=2.33.0-1ubuntu1
+          
+          # Hold the package to prevent automatic upgrades
+          sudo apt-mark hold git
+          
+          # Verify the installation
+          git --version
+          # sudo apt-get update
           sudo apt-get install -y subversion
           sudo apt-get install -y ruby ruby-dev
           sudo apt-get install -y git git-svn
