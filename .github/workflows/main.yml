@@ -148,6 +148,7 @@ jobs:
 
       - name: Clone SVN repository using svn2git
         run: |
+          git svn clone "$SVN_REPO_URL" --username "$SVN_USERNAME" --no-metadata --stdlayout
           docker build -t dockerfile .
           docker run --rm \
             -e SVN_REPO_URL="$SVN_REPO_URL" \
