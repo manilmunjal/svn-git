@@ -147,8 +147,10 @@ jobs:
 
       - name: Clone SVN repository using svn2git
         run: |
+          
           sudo apt-get update
           sudo apt-get install -y git subversion
+          export PATH="$PATH:/usr/bin/git:/usr/bin/svn"
           git svn clone $SVN_REPO_URL --authors-file=authors.txt --no-metadata -s git_repo
           cd git_repo
           git remote add origin $GIT_REPO_URL
