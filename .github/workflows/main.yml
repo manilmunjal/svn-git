@@ -151,7 +151,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y subversion
           sudo apt-get install -y ruby ruby-dev
-          sudo apt-get install -y git-svn
+          sudo apt-get install -y git=1:2.33.0-1ubuntu1 git-svn subversion
           sudo gem install svn2git
           svn2git $SVN_REPO_URL --username $SVN_USERNAME --password $SVN_PASSWORD --no-minimize-url
           git remote add origin $GIT_REPO_URL
