@@ -148,17 +148,19 @@ jobs:
 
       - name: Clone SVN repository using svn2git
         run: |
+          docker build -t dockerfile .
+          docker run --rm -v $PWD:/workspace svn2git svn2git <SVN_URL>
 
 
-           sudo apt-get update
-           sudo apt-get install -y subversion git
-           sudo apt-get install -y git-svn
-           svn checkout <SVN_URL> svn_repo
-           cd svn_repo
-           svn2git
-           cd svn_repo
-           git remote add origin <GIT_REPO_URL>
-           git push -u origin master
+           # sudo apt-get update
+           # sudo apt-get install -y subversion git
+           # sudo apt-get install -y git-svn
+           # svn checkout <SVN_URL> svn_repo
+           # cd svn_repo
+           # svn2git
+           # cd svn_repo
+           # git remote add origin <GIT_REPO_URL>
+           # git push -u origin master
 
           
           # # sudo apt-get update
