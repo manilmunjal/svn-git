@@ -1,76 +1,140 @@
+# name: Binary Migration Workflow
+
+# on:
+#   push:
+#     branches:
+#       - main
+# env:
+#   SVN_USERNAME: "manilmunjal"
+#   SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }} # Make sure to add this secret in repository settings
+#   SVN_REPO_URL: "https://eu-subversion.assembla.com/svn/anythingispossible%5ESVN.svn-demo/"
+#   JFROG_URL: "https://manilmunjalsneo.jfrog.io/artifactory"
+#   JFROG_REPO: "binary-store-generic-local"
+#   JFROG_USER: "manil.m@statusneo.com"
+#   JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }} # Make sure to add this secret in repository settings
+#   GIT_REPO_URL: "https://${{ secrets.PAT }}@github.com/manilmunjal/svn-git.git"
+# jobs:
+#   migrate:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Install Git and SVN
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y git subversion
+
+#       # - name: Set up environment
+#       #   run: |
+#       #     export PATH="$PATH:/usr/bin/git:/usr/bin/svn"
+
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       # Define variables
+     
+
+#       # Extract binaries and upload to JFrog
+#       - name: Extract binaries and upload to JFrog
+#         run: |
+#           git config --global user.name "manilmunjal"
+#           git config --global user.email "manilmunjal@gmail.com"
+
+#           # Extract binaries
+#           mkdir -p binaries
+#           svn co --username "$SVN_USERNAME" --password "$SVN_PASSWORD" "$SVN_REPO_URL" binaries
+
+#           # Install JFrog CLI
+#           curl -fL https://getcli.jfrog.io | sh
+#           mv jfrog /usr/local/bin/jfrog
+
+#           # Configure JFrog CLI
+#           jfrog config add my-jfrog-server --artifactory-url $JFROG_URL --user $JFROG_USER --password $JFROG_PASSWORD --interactive=false
+          
+#           # Upload binaries to JFrog and commit URLs to Git
+#           cd binaries
+#           for binary in $(find . -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.bin" \)); do
+#             binary_name=$(basename "$binary")
+#             jfrog rt u "$binary" "$JFROG_REPO/$binary_name"
+#             jfrog_url="$JFROG_URL/$JFROG_REPO/$binary_name"
+#             echo "$jfrog_url" > "$binary.url"
+#           done
+#           git init
+#           git add .
+#           git commit -m "Add JFrog URL pointers"
+#           git push -u origin master
+
+#       # # Clone SVN repository and perform SVN to Git migration
+#       # - name: SVN to Git migration
+#       #   run: |
+#       #     # Clone SVN repository
+#       #     svn co --username $SVN_USERNAME --password $SVN_PASSWORD $SVN_REPO_URL svn_repo
+
+#       #     # Run svn2git migration
+#       #     git svn clone $SVN_REPO_URL --authors-file=authors.txt --no-metadata -s git_repo
+#       #     cd git_repo
+#       #     git remote add origin $GIT_REPO_URL
+#       #     git push -u origin master
+
 name: Binary Migration Workflow
 
 on:
   push:
     branches:
       - main
+      # Define variables
 env:
+  # PAT: ${{ secrets.PAT }}
+  SVN_REPO_URL: "https://eu-subversion.assembla.com/svn/anythingispossible%5ESVN.svn-demo/"
   SVN_USERNAME: "manilmunjal"
   SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }} # Make sure to add this secret in repository settings
-  SVN_REPO_URL: "https://eu-subversion.assembla.com/svn/anythingispossible%5ESVN.svn-demo/"
   JFROG_URL: "https://manilmunjalsneo.jfrog.io/artifactory"
   JFROG_REPO: "binary-store-generic-local"
   JFROG_USER: "manil.m@statusneo.com"
   JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }} # Make sure to add this secret in repository settings
-  GIT_REPO_URL: "https://${{ secrets.PAT }}@github.com/manilmunjal/svn-git.git"
+  GIT_REPO_URL: "https://${{secrets.PAT}}@github.com/manilmunjal/svn-git.git"
+
+
+
 jobs:
   migrate:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install Git and SVN
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git subversion
-
-      # - name: Set up environment
-      #   run: |
-      #     export PATH="$PATH:/usr/bin/git:/usr/bin/svn"
-
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Define variables
-     
+      # Install required packages
+      # - name: Install dependencies
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y git-svn
+      #     sudo apt-get install -y default-jdk
+      #     sudo apt-get install -y unzip
 
+      # Define variables
       # Extract binaries and upload to JFrog
       - name: Extract binaries and upload to JFrog
         run: |
           git config --global user.name "manilmunjal"
           git config --global user.email "manilmunjal@gmail.com"
-
           # Extract binaries
+          # mkdir binaries
+          # Your commands to extract binaries, e.g., unzip or copy
           mkdir -p binaries
           svn co --username "$SVN_USERNAME" --password "$SVN_PASSWORD" "$SVN_REPO_URL" binaries
-
-          # Install JFrog CLI
-          curl -fL https://getcli.jfrog.io | sh
-          mv jfrog /usr/local/bin/jfrog
-
-          # Configure JFrog CLI
-          jfrog config add my-jfrog-server --artifactory-url $JFROG_URL --user $JFROG_USER --password $JFROG_PASSWORD --interactive=false
           
           # Upload binaries to JFrog and commit URLs to Git
           cd binaries
-          for binary in $(find . -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.bin" \)); do
+          find . -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.bin" \) | while read binary; do
             binary_name=$(basename "$binary")
             jfrog rt u "$binary" "$JFROG_REPO/$binary_name"
             jfrog_url="$JFROG_URL/$JFROG_REPO/$binary_name"
             echo "$jfrog_url" > "$binary.url"
+            git add "$binary.url"
           done
-          git init
-          git add .
           git commit -m "Add JFrog URL pointers"
-          git push -u origin master
-
-      # # Clone SVN repository and perform SVN to Git migration
-      # - name: SVN to Git migration
-      #   run: |
-      #     # Clone SVN repository
-      #     svn co --username $SVN_USERNAME --password $SVN_PASSWORD $SVN_REPO_URL svn_repo
-
-      #     # Run svn2git migration
-      #     git svn clone $SVN_REPO_URL --authors-file=authors.txt --no-metadata -s git_repo
-      #     cd git_repo
-      #     git remote add origin $GIT_REPO_URL
-      #     git push -u origin master
+          git push
+      # SVN to Git migration using svn2git
+      - name: SVN to Git migration
+        run: |
+          # Clone SVN repository
