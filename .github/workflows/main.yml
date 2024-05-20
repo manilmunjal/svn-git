@@ -148,29 +148,53 @@ jobs:
 
       - name: Clone SVN repository using svn2git
         run: |
-          # sudo apt-get update
+          # # sudo apt-get update
+          # # sudo apt-get install -y subversion
+          # # sudo apt-get install -y ruby ruby-dev
+          # # sudo apt-get install -y git=1:2.33.0-1ubuntu1 git-svn subversion
+          # sudo apt-get remove git
+
+          # # Add repository with the desired version (if necessary)
+          # # For example, if you want to use version 2.33.0-1ubuntu1:
+          # # sudo add-apt-repository ppa:git-core/ppa
+          
+          # # Install the older version of git
+          # sudo apt-get install git=2.33.0-1ubuntu1
+          
+          # # Hold the package to prevent automatic upgrades
+          # sudo apt-mark hold git
+          
+          # # Verify the installation
+          # git --version
+          # # sudo apt-get update
           # sudo apt-get install -y subversion
           # sudo apt-get install -y ruby ruby-dev
-          # sudo apt-get install -y git=1:2.33.0-1ubuntu1 git-svn subversion
-          sudo apt-get remove git
+          # sudo apt-get install -y git git-svn
+          # sudo gem install svn2git
+          #!/bin/bash
 
-          # Add repository with the desired version (if necessary)
-          # For example, if you want to use version 2.33.0-1ubuntu1:
-          # sudo add-apt-repository ppa:git-core/ppa
+          # Remove the existing git package
+          sudo apt-get remove git
           
-          # Install the older version of git
-          sudo apt-get install git=2.33.0-1ubuntu1
+          # Download the specific version of git .deb package
+          wget http://archive.ubuntu.com/ubuntu/pool/main/g/git/git_2.33.0-1ubuntu1_amd64.deb
+          
+          # Install the downloaded git package
+          sudo dpkg -i git_2.33.0-1ubuntu1_amd64.deb
           
           # Hold the package to prevent automatic upgrades
           sudo apt-mark hold git
           
           # Verify the installation
           git --version
-          # sudo apt-get update
+          
+          # Install additional required packages
+          sudo apt-get update
           sudo apt-get install -y subversion
           sudo apt-get install -y ruby ruby-dev
-          sudo apt-get install -y git git-svn
+          sudo apt-get install -y git-svn
           sudo gem install svn2git
+
           svn2git $SVN_REPO_URL --username $SVN_USERNAME --password $SVN_PASSWORD --no-minimize-url
           git remote add origin $GIT_REPO_URL
           git push -u origin --all
