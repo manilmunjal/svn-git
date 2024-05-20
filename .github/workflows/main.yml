@@ -140,7 +140,16 @@ jobs:
           done
           git commit -m "Add JFrog URL pointers"
           git push
-      # SVN to Git migration using svn2git
-      - name: SVN to Git migration
+      # # SVN to Git migration using svn2git
+      # - name: SVN to Git migration
+      #   run: |
+      #     # Clone SVN repository
+
+      - name: Clone SVN repository using svn2git
         run: |
-          # Clone SVN repository
+          sudo apt-get update
+          sudo apt-get install -y git subversion
+          git svn clone $SVN_REPO_URL --authors-file=authors.txt --no-metadata -s git_repo
+          cd git_repo
+          git remote add origin $GIT_REPO_URL
+          git push -u origin master
