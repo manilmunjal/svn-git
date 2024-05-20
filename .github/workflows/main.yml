@@ -173,11 +173,13 @@ jobs:
           # sudo gem install svn2git
           #!/bin/bash
 
+          #!/bin/bash
+
           # Remove the existing git package
           sudo apt-get remove git
           
           # Download the specific version of git .deb package
-          wget http://archive.ubuntu.com/ubuntu/pool/main/g/git/git_2.33.0-1ubuntu1_amd64.deb
+          wget http://security.ubuntu.com/ubuntu/pool/main/g/git/git_2.33.0-1ubuntu1_amd64.deb
           
           # Install the downloaded git package
           sudo dpkg -i git_2.33.0-1ubuntu1_amd64.deb
