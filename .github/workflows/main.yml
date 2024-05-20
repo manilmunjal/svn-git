@@ -151,6 +151,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y git subversion
           sudo apt-get install git-svn
+          sudo apt-get install svn2git
+          svn2git $SVN_REPO_URL
           # export PATH="$PATH:/usr/bin/git:/usr/bin/svn"
           git svn clone $SVN_REPO_URL --authors-file=authors.txt --no-metadata -s git_repo
           cd git_repo
