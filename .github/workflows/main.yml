@@ -1,94 +1,51 @@
-name: SVN to Git Migration
+name: SVN to GitHub Migration
 
-on:
-  push:
-    branches:
-      - main
-                # $SUBGIT_HOME/bin/subgit uninstall git_repo
-
+# on:
+#   push:
+#     branches:
+#       - main  # Trigger the workflow on pushes to the main branch
 
 jobs:
   migrate:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Git
+      - name: Set up Git credentials
         run: |
-          git config --global user.email "manilmunjal@gmail.com"
-          git config --global user.name "manilmunjal"
+          git config --global user.email "chaudharysarthak46@gmail.com"
+          git config --global user.name "SarthakChaudhary46"
 
-      - name: Install dependencies
+      - name: Clone SVN repository and extract JFrog Artifactory URLs
         run: |
-          sudo apt-get update
-          sudo apt-get install -y git-svn default-jdk unzip wget
+          svn co https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/ svn_repo --username manilmunjal --password Mu@230841
+          cd svn_repo
 
-      - name: Clone SVN repository
-        run: |
-          svn co --username ${{ secrets.SVN_USERNAME }} --password ${{ secrets.SVN_PASSWORD }} https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/ svn_repo
-        env:
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SVN_REPO_URL: https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/
-
-      - name: Set up JFrog CLI
-        run: |
-          curl -fL https://getcli.jfrog.io | sh
-          mv jfrog /usr/local/bin/jfrog
-          jfrog config add my-jfrog-server --artifactory-url https://manilmunjalsneo.jfrog.io/artifactory--user ${{ secrets.JFROG_USER }} --password ${{ secrets.JFROG_PASSWORD }} --interactive=false
-
-      - name: Create Git repository
-        run: |
-          mkdir git_repo
-          cd git_repo
-          git init
-
-      - name: Copy SVN contents to Git repository
-        run: |
-          cp -r ../svn_repo/* .
-
-      - name: Upload binaries to JFrog and replace with URL pointers
-        run: |
+          # Extract JFrog Artifactory URLs for binary files
           find . -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.bin" \) | while read binary; do
             binary_name=$(basename "$binary")
-            jfrog rt u "$binary" "${{ secrets.JFROG_REPO }}/$binary_name"
-            jfrog_url="https://manilmunjalsneo.jfrog.io/artifactory/${{ secrets.JFROG_REPO }}/$binary_name"
+            jfrog_url="https://aws46.jfrog.io/artifactory/demo-generic-local/$binary_name"
             echo "$jfrog_url" > "$binary.url"
             git add "$binary.url"
           done
 
-      - name: Create .gitignore
-        run: |
-          LANGUAGE="Java"
-          curl -L https://raw.githubusercontent.com/github/gitignore/main/Java.gitignore -o .gitignore
+          # Add all files excluding binaries
+          find . -type f \( ! -iname "*.exe" -a ! -iname "*.dll" -a ! -iname "*.bin" \) -exec git add {} +
 
-      - name: Commit changes
-        run: |
-          git add .
-          git commit -m "Initial commit"
+          # Commit URL pointers back to Git instead of binaries
+          git commit -m "Test 21212"
 
-      - name: Push to GitLab
+      - name: Add GitHub repository as remote
         run: |
-          git remote add origin https://github.com/manilmunjal/svn-git.git
-          git push -u origin master
+          git remote add github_repo https://github.com/SarthakChaudhary46/Svn2Git
 
-      - name: Clean up
+      - name: Push to GitHub
         run: |
-          cd ..
-          rm -rf svn_repo git_repo
-
-      - name: Install and configure SubGit
-        run: |
-          wget --quiet https://subgit.com/download/subgit-3.3.12.zip
-          unzip -qq subgit-3.3.12.zip
-          SUBGIT_HOME=$(pwd)/subgit-3.3.12
-          $SUBGIT_HOME/bin/subgit configure --layout auto https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/
-          $SUBGIT_HOME/bin/subgit install git_repo
-        env:
-          SVN_REPO_URL: https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/
-          GIT_REPO_URL: https://github.com/manilmunjal/svn-git.git
-          JFROG_URL: https://manilmunjalsneo.jfrog.io/artifactory
-          JFROG_USER: ${{ secrets.JFROG_USER }}
-          JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
-          JFROG_REPO: ${{ secrets.JFROG_REPO }}
+          git config --global credential.helper store
+          git config --global user.email "$GIT_EMAIL"
+          git config --global user.name "$GIT_NAME"
+          echo "https://SarthakChaudhary46:${{ secrets.PAT }}@github.com/SarthakChaudhary46/Svn2Git" > ~/.git-credentials
+          git push --all github_repo
+          git push --tags github_repo
