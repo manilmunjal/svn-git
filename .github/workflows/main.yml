@@ -1,3 +1,18 @@
+name: Binary Migration Workflow
+
+on:
+  push:
+    branches:
+      - main
+env:
+  SVN_USERNAME: "manilmunjal"
+  SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }} # Make sure to add this secret in repository settings
+  SVN_REPO_URL: "https://eu-subversion.assembla.com/svn/anythingispossible%5ESVN.svn-demo/"
+  JFROG_URL: "https://manilmunjalsneo.jfrog.io/artifactory"
+  JFROG_REPO: "binary-store-generic-local"
+  JFROG_USER: "manil.m@statusneo.com"
+  JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }} # Make sure to add this secret in repository settings
+  GIT_REPO_URL: "https://${{ secrets.PAT }}@github.com/manilmunjal/svn-git.git"
 jobs:
   migrate:
     runs-on: ubuntu-latest
@@ -8,23 +23,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y git subversion
 
-      - name: Set up environment
-        run: |
-          export PATH="$PATH:/usr/bin/git:/usr/bin/svn"
+      # - name: Set up environment
+      #   run: |
+      #     export PATH="$PATH:/usr/bin/git:/usr/bin/svn"
 
       - name: Checkout code
         uses: actions/checkout@v2
 
       # Define variables
-      env:
-        SVN_USERNAME: "manilmunjal"
-        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }} # Make sure to add this secret in repository settings
-        SVN_REPO_URL: "https://eu-subversion.assembla.com/svn/anythingispossible%5ESVN.svn-demo/"
-        JFROG_URL: "https://manilmunjalsneo.jfrog.io/artifactory"
-        JFROG_REPO: "binary-store-generic-local"
-        JFROG_USER: "manil.m@statusneo.com"
-        JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }} # Make sure to add this secret in repository settings
-        GIT_REPO_URL: "https://${{ secrets.PAT }}@github.com/manilmunjal/svn-git.git"
+     
 
       # Extract binaries and upload to JFrog
       - name: Extract binaries and upload to JFrog
