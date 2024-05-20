@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-                # $SUBGIT_HOME/bin/subgit uninstall git_repo
-
 
 jobs:
   migrate:
@@ -19,10 +17,13 @@ jobs:
           git config --global user.email "manilmunjal@gmail.com"
           git config --global user.name "manilmunjal"
 
-      - name: Install dependencies
+      - name: Install dependencies and resolve package conflicts
         run: |
           sudo apt-get update
-          sudo apt-get install -y git-svn default-jdk unzip wget
+          sudo apt-get install -y git-svn=1:2.45.1-0ppa1~ubuntu22.04.1 default-jdk unzip wget
+          sudo apt-get -f install
+          sudo dpkg --configure -a
+          sudo apt-get clean
 
       - name: Clone SVN repository
         run: |
@@ -30,7 +31,6 @@ jobs:
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SVN_REPO_URL: https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/
 
       - name: Set up JFrog CLI
         run: |
@@ -53,42 +53,3 @@ jobs:
           find . -type f \( -name "*.exe" -o -name "*.dll" -o -name "*.bin" \) | while read binary; do
             binary_name=$(basename "$binary")
             jfrog rt u "$binary" "${{ secrets.JFROG_REPO }}/$binary_name"
-            jfrog_url="https://manilmunjalsneo.jfrog.io/artifactory/${{ secrets.JFROG_REPO }}/$binary_name"
-            echo "$jfrog_url" > "$binary.url"
-            git add "$binary.url"
-          done
-
-      - name: Create .gitignore
-        run: |
-          LANGUAGE="Java"
-          curl -L https://raw.githubusercontent.com/github/gitignore/main/Java.gitignore -o .gitignore
-
-      - name: Commit changes
-        run: |
-          git add .
-          git commit -m "Initial commit"
-
-      - name: Push to GitLab
-        run: |
-          git remote add origin https://github.com/manilmunjal/svn-git.git
-          git push -u origin master
-
-      - name: Clean up
-        run: |
-          cd ..
-          rm -rf svn_repo git_repo
-
-      - name: Install and configure SubGit
-        run: |
-          wget --quiet https://subgit.com/download/subgit-3.3.12.zip
-          unzip -qq subgit-3.3.12.zip
-          SUBGIT_HOME=$(pwd)/subgit-3.3.12
-          $SUBGIT_HOME/bin/subgit configure --layout auto https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/
-          $SUBGIT_HOME/bin/subgit install git_repo
-        env:
-          SVN_REPO_URL: https://eu-subversion.assembla.com/svn/anythingispossible^SVN.svn-demo/
-          GIT_REPO_URL: https://github.com/manilmunjal/svn-git.git
-          JFROG_URL: https://manilmunjalsneo.jfrog.io/artifactory
-          JFROG_USER: ${{ secrets.JFROG_USER }}
-          JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
-          JFROG_REPO: ${{ secrets.JFROG_REPO }}
