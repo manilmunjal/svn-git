@@ -41,12 +41,12 @@ jobs:
         run: |
           git remote add github_repo https://github.com/manilmunjal/svn-git.git
 
-      # - name: Push to GitHub
-      #   run: |
-      #     # git config --global credential.helper store
-      #     # git config --global user.email "$GIT_EMAIL"
-      #     # git config --global user.name "$GIT_NAME"
-      #     # echo "https://SarthakChaudhary46:${{ secrets.PAT }}@github.com/SarthakChaudhary46/Svn2Git" > ~/.git-credentials
-      #     git push --all github_repo
-      #     git push --tags github_repo
-      #     # git commit -m "hemlo"
+      - name: Push to GitHub
+        run: |
+          git config --global credential.helper store
+          git config --global user.email "$GIT_EMAIL"
+          git config --global user.name "$GIT_NAME"
+          # echo "https://SarthakChaudhary46:${{ secrets.PAT }}@github.com/SarthakChaudhary46/Svn2Git" > ~/.git-credentials
+          git push --all github_repo
+          git push --tags github_repo
+          # git commit -m "hemlo"
