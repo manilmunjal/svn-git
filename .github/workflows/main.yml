@@ -34,6 +34,9 @@ jobs:
       # Extract binaries and upload to JFrog
       - name: Extract binaries and upload to JFrog
         run: |
+          git config --global user.name "manilmunjal"
+          git config --global user.email "manilmunjal@gmail.com"
+
           # Extract binaries
           mkdir binaries
           # Your commands to extract binaries, e.g., unzip or copy
