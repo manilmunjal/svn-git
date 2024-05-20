@@ -38,8 +38,10 @@ jobs:
           git config --global user.email "manilmunjal@gmail.com"
 
           # Extract binaries
-          mkdir binaries
+          # mkdir binaries
           # Your commands to extract binaries, e.g., unzip or copy
+          mkdir -p binaries
+          svn co --username "$SVN_USERNAME" --password "$SVN_PASSWORD" "$SVN_REPO_URL" binaries
 
           # Install JFrog CLI
           curl -fL https://getcli.jfrog.io | sh
