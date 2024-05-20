@@ -6,7 +6,7 @@ on:
       - main
       # Define variables
 env:
-  PAT: ${{ secrets.PAT }}
+  # PAT: ${{ secrets.PAT }}
   SVN_REPO_URL: "https://eu-subversion.assembla.com/svn/anythingispossible%5ESVN.svn-demo/"
   SVN_USERNAME: "manilmunjal"
   SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }} # Make sure to add this secret in repository settings
@@ -14,7 +14,7 @@ env:
   JFROG_REPO: "binary-store-generic-local"
   JFROG_USER: "manil.m@statusneo.com"
   JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }} # Make sure to add this secret in repository settings
-  GIT_REPO_URL: "https://$PAT@github.com/manilmunjal/svn-git.git"
+  GIT_REPO_URL: "https://${{ secrets.PAT }}@github.com/manilmunjal/svn-git.git"
 
  
 
