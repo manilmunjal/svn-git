@@ -1,12 +1,24 @@
-FROM ubuntu:22.04
+# Use an official Ubuntu as a base image
+FROM ubuntu:latest
 
-RUN apt-get update && apt-get install -y \
-    git \
-    git-svn \
-    subversion \
-    && rm -rf /var/lib/apt/lists/*
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Install necessary packages
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        subversion \
+        git \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/*
 
-ENTRYPOINT ["/entrypoint.sh"]
+# Install svn2git from GitHub
+RUN git clone https://github.com/nirvdrum/svn2git.git \
+    && cd svn2git \
+    && make install
+
+# Set the working directory
+WORKDIR /workspace
+
+# Default command
+CMD ["bash"]
