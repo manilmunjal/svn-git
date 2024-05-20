@@ -12,7 +12,9 @@ env:
   JFROG_REPO: "binary-store-generic-local"
   JFROG_USER: "manil.m@statusneo.com"
   JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }} # Make sure to add this secret in repository settings
+  PAT: "${{ secrets.PAT }}"
   GIT_REPO_URL: "https://$PAT@github.com/manilmunjal/svn-git.git"
+ 
 
 jobs:
   migrate:
