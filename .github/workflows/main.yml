@@ -4,6 +4,15 @@ on:
   push:
     branches:
       - main
+env:
+  SVN_REPO_URL: "https://eu-subversion.assembla.com/svn/anythingispossible%5ESVN.svn-demo/"
+  SVN_USERNAME: "manilmunjal"
+  SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }} # Make sure to add this secret in repository settings
+  JFROG_URL: "https://manilmunjalsneo.jfrog.io/artifactory"
+  JFROG_REPO: "binary-store-generic-local"
+  JFROG_USER: "manil.m@statusneo.com"
+  JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }} # Make sure to add this secret in repository settings
+  GIT_REPO_URL: "https://github.com/yourusername/yourrepository.git"
 
 jobs:
   migrate:
@@ -22,16 +31,6 @@ jobs:
           sudo apt-get install -y unzip
 
       # Define variables
-      env:
-        SVN_REPO_URL: "https://eu-subversion.assembla.com/svn/anythingispossible%5ESVN.svn-demo/"
-        SVN_USERNAME: "manilmunjal"
-        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }} # Make sure to add this secret in repository settings
-        JFROG_URL: "https://manilmunjalsneo.jfrog.io/artifactory"
-        JFROG_REPO: "binary-store-generic-local"
-        JFROG_USER: "manil.m@statusneo.com"
-        JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }} # Make sure to add this secret in repository settings
-        GIT_REPO_URL: "https://github.com/yourusername/yourrepository.git"
-
       # Extract binaries and upload to JFrog
       - name: Extract binaries and upload to JFrog
         run: |
@@ -69,4 +68,3 @@ jobs:
           cd git_repo
           git remote add origin $GIT_REPO_URL
           git push -u origin master
-
