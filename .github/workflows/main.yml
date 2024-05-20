@@ -43,10 +43,30 @@ jobs:
 
       - name: Push to GitHub
         run: |
-          git config --global credential.helper store
+
+          GIT_EMAIL="manilmunjal@gmail.com"
+          GIT_NAME="manilmunjal"
+          
+          # Configure Git settings
           git config --global user.email "$GIT_EMAIL"
           git config --global user.name "$GIT_NAME"
-          # echo "https://SarthakChaudhary46:${{ secrets.PAT }}@github.com/SarthakChaudhary46/Svn2Git" > ~/.git-credentials
-          git push --all github_repo
-          git push --tags github_repo
-          # git commit -m "hemlo"
+          
+          # Set the GitHub repository URL
+          GITHUB_REPO="https://github.com/manilmunjal/svn-git.git"
+          
+          # Set up Git credentials
+          git config --global credential.helper store
+          
+          # Push all branches to the GitHub repository
+          git push --all "$GITHUB_REPO"
+          
+          # Push tags to the GitHub repository
+          git push --tags "$GITHUB_REPO"
+
+          # git config --global credential.helper store
+          # git config --global user.email "$GIT_EMAIL"
+          # git config --global user.name "$GIT_NAME"
+          # # echo "https://SarthakChaudhary46:${{ secrets.PAT }}@github.com/SarthakChaudhary46/Svn2Git" > ~/.git-credentials
+          # git push --all github_repo
+          # git push --tags github_repo
+          # # git commit -m "hemlo"
